@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class ApiService {
 
-  static const String baseUrl = 'http://192.168.1.71:3000';
+  static const String baseUrl = 'http://192.168.1.76:3000';
 
   static Future<List<dynamic>> getReportes() async {
     final response = await http.get(
@@ -86,6 +86,18 @@ static Future<List<dynamic>> getReportesGenerales() async {
     return jsonDecode(response.body);
   } else {
     throw Exception('Error al obtener reportes generales');
+  }
+}
+
+static Future<List<dynamic>> getInstituciones() async {
+  final response = await http.get(
+    Uri.parse('$baseUrl/instituciones'),
+  );
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Error al obtener instituciones');
   }
 }
 

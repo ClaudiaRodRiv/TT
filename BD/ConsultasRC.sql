@@ -13,3 +13,5 @@ SELECT Reportes.*, ReporteServiciosPublicos.* FROM Reportes INNER JOIN ReporteSe
 SELECT Reportes.*, ReporteRoboAsalto.* FROM Reportes INNER JOIN ReporteRoboAsalto ON Reportes.IdReporte = ReporteRoboAsalto.ReporteId;
 
 SELECT Reportes.*, ReporteGeneral.* FROM Reportes INNER JOIN ReporteGeneral ON Reportes.IdReporte = ReporteGeneral.ReporteId;
+
+SELECT * FROM Instituciones;

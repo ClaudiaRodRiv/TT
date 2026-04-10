@@ -19,7 +19,7 @@ CREATE TABLE Instituciones (
     Telefono VARCHAR(100),
     CorreoElectronico VARCHAR(100),
     HorarioAtencion VARCHAR(100),
-    Direccion VARCHAR(200),
+    Direccion TEXT,
     EnlaceWeb VARCHAR(150),
 
     FOREIGN KEY (TipoReporteId)
@@ -131,4 +131,3 @@ INSERT INTO TiposReporte (NombreTipoReporte) VALUES
 ('Violencia de género'),
 ('Narcomenudeo'),
 ('General');
-SELECT * FROM TiposReporte;
