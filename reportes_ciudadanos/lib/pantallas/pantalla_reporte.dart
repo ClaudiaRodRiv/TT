@@ -125,10 +125,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
     final map = {
       'Servicios Públicos': [Icons.construction, Colors.blue.shade800],
       'Robo o Asalto': [Icons.lock_open, Colors.purple.shade400],
-      'Corrupción u omisión de servidor público': [
-        Icons.account_balance,
-        Colors.pink.shade800,
-      ],
+      'Corrupción u omisión de servidor público': [Icons.account_balance, Colors.pink.shade800],
       'Violencia de Género': [Icons.female, Colors.pinkAccent],
       'Narcomenudeo': [Icons.local_police, Colors.cyan.shade400],
       'Reporte General': [Icons.description, Colors.deepOrangeAccent],
@@ -293,67 +290,65 @@ class _PantallaReporteState extends State<PantallaReporte> {
   List<Map<String, dynamic>> _camposServiciosPublicos() => [
     {'tipo': 'subtitulo', 'label': 'Campos obligatorios'},
     {'tipo': 'text', 'label': 'Folio SUAC'},
-    {
-      'tipo': 'dropdown',
-      'label': 'Tipo de problema',
+    {'tipo': 'dropdown', 'label': 'Tipo de problema',
       'opciones': [
         'Bache/socavón',
         'Alumbrado público con falla',
+        'Falta de señalización',
+        'Obstrucción de vía',
         'Basura',
         'Fuga de agua',
-        'Otro',
-      ],
-    },
+        'Coladera tapada',
+        'Mobiliario urbano dañado' ],},
     {'tipo': 'text', 'label': 'Descripción del problema', 'multiline': true},
     {'tipo': 'date', 'label': 'Fecha del reporte'},
     {'tipo': 'number', 'label': 'Tiempo estimado sin atención'},
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
-    {'tipo': 'foto', 'label': 'Evidencia'},
+    {'tipo': 'foto', 'label': 'Evidencia'}
   ];
 
   // Campos para reporte de Robo o Asalto
   List<Map<String, dynamic>> _camposRoboAsalto() => [
     {'tipo': 'subtitulo', 'label': 'Campos obligatorios'},
     {'tipo': 'text', 'label': 'Folio SUAC'},
-    {
-      'tipo': 'dropdown',
-      'label': 'Tipo de incidente',
-      'opciones': ['Robo sin violencia', 'Robo con violencia'],
-    },
+    {'tipo': 'dropdown', 'label': 'Tipo de incidente',
+      'opciones': [
+        'Robo sin violencia',
+        'Robo con violencia' ],},
     {'tipo': 'text', 'label': 'Descripción del incidente', 'multiline': true},
     {'tipo': 'date', 'label': 'Fecha del incidente'},
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
     {'tipo': 'text', 'label': 'Objetos robados', 'multiline': true},
     {'tipo': 'number', 'label': 'Número de agresores'},
-    {
-      'tipo': 'text',
-      'label': 'Descripción de los agresores',
-      'multiline': true,
-    },
-    {
-      'tipo': 'dropdown',
-      'label': 'Medio de transporte utilizado',
-      'opciones': ['A pie', 'Motocicleta', 'Automóvil', 'Otro'],
-    },
-    {
-      'tipo': 'dropdown',
-      'label': 'Arma utilizada',
-      'opciones': ['Ninguna', 'Cuchillo', 'Pistola', 'Otro'],
-    },
-    {'tipo': 'foto', 'label': 'Evidencia'},
+    {'tipo': 'text', 'label': 'Descripción de los agresores', 'multiline': true,},
+    {'tipo': 'dropdown', 'label': 'Medio de transporte utilizado',
+      'opciones': [
+        'A pie',
+        'Bicicleta',
+        'Motocicleta',
+        'Automóvil' ],},
+    {'tipo': 'dropdown', 'label': 'Arma utilizada', 
+    'opciones': [
+      'Ninguna', 
+      'Cuchillo/Navaja',
+      'Armas contundentes',
+      'Pistola' ],},
+    {'tipo': 'foto', 'label': 'Evidencia'}
   ];
 
   // Campos para reporte de Corrupción u Omisión
   List<Map<String, dynamic>> _camposCorrupcion() => [
     {'tipo': 'subtitulo', 'label': 'Campos obligatorios'},
     {'tipo': 'text', 'label': 'Folio SUAC'},
-    {
-      'tipo': 'dropdown',
-      'label': 'Tipo de falta reportada',
-      'opciones': ['Corrupción', 'Omisión o negligencia', 'Otro'],
-    },
+    {'tipo': 'dropdown', 'label': 'Tipo de falta reportada',
+      'opciones': [
+        'Soborno', 
+        'Abuso de autoridad', 
+        'Omisión de funciones', 
+        'Tráfico de influencias', 
+        'Negativa de servicio o Uso indebido de recursos' ],},
     {'tipo': 'text', 'label': 'Descripción del hecho', 'multiline': true},
     {'tipo': 'date', 'label': 'Fecha del hecho'},
     {'tipo': 'text', 'label': 'Dependencia o institución involucrada'},
@@ -361,39 +356,30 @@ class _PantallaReporteState extends State<PantallaReporte> {
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
     {'tipo': 'text', 'label': 'Nombre del servidor público'},
     {'tipo': 'text', 'label': 'Cargo del servidor público'},
-    {'tipo': 'foto', 'label': 'Evidencia'},
+    {'tipo': 'foto', 'label': 'Evidencia'}
   ];
 
   // Campos para reporte de Violencia de Género
   List<Map<String, dynamic>> _camposViolenciaGenero() => [
     {'tipo': 'subtitulo', 'label': 'Campos obligatorios'},
     {'tipo': 'text', 'label': 'Folio SUAC'},
-    {
-      'tipo': 'dropdown',
-      'label': 'Tipo de violencia',
+    {'tipo': 'dropdown', 'label': 'Tipo de violencia',
       'opciones': [
         'Física',
         'Psicológica',
         'Sexual',
         'Económica',
-        'Digital',
-        'Otra',
-      ],
-    },
+        'Digital' ],},
     {'tipo': 'text', 'label': 'Descripción del incidente', 'multiline': true},
     {'tipo': 'date', 'label': 'Fecha del incidente'},
-    {
-      'tipo': 'dropdown',
-      'label': 'Relación con la persona agresora',
+    {'tipo': 'dropdown', 'label': 'Relación con la persona agresora',
       'opciones': [
         'Pareja actual',
         'Expareja',
         'Familiar',
+        'Amigo',
         'Compañero de trabajo o escuela',
-        'Desconocido',
-        'Otro',
-      ],
-    },
+        'Desconocido' ],},
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
     {'tipo': 'text', 'label': 'Nombre o alias del agresor'},
@@ -404,36 +390,27 @@ class _PantallaReporteState extends State<PantallaReporte> {
   List<Map<String, dynamic>> _camposNarcomenudeo() => [
     {'tipo': 'subtitulo', 'label': 'Campos obligatorios'},
     {'tipo': 'text', 'label': 'Folio SUAC'},
-    {
-      'tipo': 'dropdown',
-      'label': 'Tipo de actividad sospechosa',
+    {'tipo': 'dropdown', 'label': 'Tipo de actividad sospechosa',
       'opciones': [
-        'Venta de drogas',
-        'Consumo en vía pública',
-        'Presencia de personas armadas o vehículos sospechosos',
-        'Otro',
-      ],
-    },
-    {
-      'tipo': 'text',
-      'label': 'Descripción del hecho o actividad',
-      'multiline': true,
-    },
+        'Distribución desde vehículo', 
+        'Intercambio sospechoso de paquetes', 
+        'Entrega rápida a transeúntes', 
+        'Venta de drogas en vía pública', 
+        'Puntos de venta recurrentes o Venta cerca de escuela' ],},
+    {'tipo': 'text', 'label': 'Descripción del hecho o actividad', 'multiline': true},
     {'tipo': 'date', 'label': 'Fecha del hecho'},
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
     {'tipo': 'number', 'label': 'Número de personas involucradas'},
-    {
-      'tipo': 'text',
-      'label': 'Descripción de las personas involucradas',
-      'multiline': true,
-    },
+    {'tipo': 'text', 'label': 'Descripción de las personas involucradas', 'multiline': true},
     {'tipo': 'text', 'label': 'Vehículos relacionados', 'multiline': true},
-    {
-      'tipo': 'dropdown',
-      'label': 'Frecuencia del suceso',
-      'opciones': ['Único', 'Ocasional', 'Recurrente'],
-    },
+    {'tipo': 'dropdown', 'label': 'Frecuencia del suceso',
+      'opciones': [
+        'Varias veces por semana', 
+        'Fines de semana', 
+        'Diario', 
+        'Ocasional',
+        'Cada noche' ],},
     {'tipo': 'foto', 'label': 'Evidencia'},
   ];
 
@@ -442,24 +419,18 @@ class _PantallaReporteState extends State<PantallaReporte> {
     {'tipo': 'subtitulo', 'label': 'Campos obligatorios'},
     {'tipo': 'text', 'label': 'Folio SUAC'},
     {'tipo': 'text', 'label': 'Tipo de situación reportada'},
-    {
-      'tipo': 'text',
-      'label': 'Descripción detallada del hecho',
-      'multiline': true,
-    },
+    {'tipo': 'text', 'label': 'Descripción detallada del hecho', 'multiline': true},
     {'tipo': 'date', 'label': 'Fecha del suceso'},
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
-    {
-      'tipo': 'text',
-      'label': 'Personas o elementos involucrados',
-      'multiline': true,
-    },
-    {
-      'tipo': 'dropdown',
-      'label': 'Frecuencia o recurrencia del hecho',
-      'opciones': ['Único', 'Ocasional', 'Recurrente'],
-    },
+    {'tipo': 'text', 'label': 'Personas o elementos involucrados', 'multiline': true},
+    {'tipo': 'dropdown', 'label': 'Frecuencia o recurrencia del hecho',
+      'opciones': [
+        'Varias veces por semana', 
+        'Fines de semana', 
+        'Diario', 
+        'Ocasional',
+        'Cada noche' ],},
     {'tipo': 'text', 'label': 'Observaciones adicionales', 'multiline': true},
     {'tipo': 'foto', 'label': 'Evidencia'},
   ];

@@ -151,6 +151,24 @@ app.get('/instituciones', (req, res) => {
   });
 });
 
+// Evidencias
+app.get('/evidencias/:reporteId', (req, res) => {
+  const { reporteId } = req.params;
+
+  db.query(
+    'SELECT * FROM Evidencias WHERE ReporteId = ?',
+    [reporteId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Error en la consulta');
+        return;
+      }
+      res.json(result);
+    }
+  );
+});
+
 app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000');
 });

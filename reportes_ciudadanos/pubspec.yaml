@@ -10,6 +10,9 @@ dependencies:
   font_awesome_flutter: ^10.10.0
   flutter:
     sdk: flutter
+  webview_flutter: ^4.7.0
+  webview_flutter_android: ^3.16.0
+  video_player: ^2.9.1
   cupertino_icons: ^1.0.8
   numberpicker: ^2.1.1
   flutter_map: ^6.1.0

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'pantalla_reporte.dart';
+import 'pantalla_detalle_reporte.dart';
 import '../services/api_service.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
@@ -348,17 +349,15 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           icono: iconoCorrupcion,
                           color: colorCorrupcion,
                           onTap: () {
-                            showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: const Text('Corrupción u omisión de servidor público'),
-                                      content: Text(
-                                        'Descripción: ${reporte['Descripcion']}\n\n'
-                                        'Dependencia: ${reporte['DependenciaInstitucionInvolucrada']}\n\n'
-                                        'Servidor: ${reporte['NombreServidorPublico']}',
-                                      ),
-                                    ),
-                                  );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetalleReporte(
+                                  reporte: reporte,
+                                  tipo: 'Corrupción u omisión de servidor público',
+                                ),
+                              ),
+                            );
                           },
                         );
                       }).whereType<Marker>(),
@@ -377,18 +376,15 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           icono: iconoNarcomenudeo,
                           color: colorNarcomenudeo,
                           onTap: () {
-                            showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title:
-                                          const Text('Narcomenudeo'),
-                                      content: Text(
-                                        'Actividad: ${reporte['TipoActividadSospechosa']}\n\n'
-                                        'Personas: ${reporte['NumeroPersonasInvolucradas']}\n\n'
-                                        'Frecuencia: ${reporte['FrecuenciaSuceso']}',
-                                      ),
-                                    ),
-                                  );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetalleReporte(
+                                  reporte: reporte,
+                                  tipo: 'Narcomenudeo',
+                                ),
+                              ),
+                            );
                           },
                         );
                       }).whereType<Marker>(),
@@ -407,18 +403,15 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           icono: iconoViolenciaGenero,
                           color: colorViolenciaGenero,
                           onTap: () {
-                            showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title:
-                                          const Text('Violencia de género'),
-                                      content: Text(
-                                        'Tipo de violencia: ${reporte['TipoViolencia']}\n\n'
-                                        'Relación con la persona agresora: ${reporte['RelacionPersonaAgresora']}\n\n'
-                                        'Nombre o alias del agresor: ${reporte['NombreAgresor']}',
-                                      ),
-                                    ),
-                                  );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetalleReporte(
+                                  reporte: reporte,
+                                  tipo: 'Violencia de Género',
+                                ),
+                              ),
+                            );
                           },
                         );
                       }).whereType<Marker>(),
@@ -437,20 +430,15 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           icono: iconoRoboAsalto,
                           color: colorRoboAsalto,
                           onTap: () {
-                            showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: const Text('Robo o asalto'),
-                                      content: Text(
-                                        'Tipo de incidente: ${reporte['TipoIncidente']}\n\n'
-                                        'Objetos robados: ${reporte['ObjetosRobados']}\n\n'
-                                        'Número de agresores: ${reporte['NumeroAgresores']}\n\n'
-                                        'Descripción de los agresores: ${reporte['DescripcionAgresores']}\n\n'
-                                        'Medio de transporte utilizado: ${reporte['MedioTransporteUtilizado']}\n\n'
-                                        'Arma utilizada: ${reporte['ArmaUtilizada']}',
-                                      ),
-                                    ),
-                                  );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetalleReporte(
+                                  reporte: reporte,
+                                  tipo: 'Robo o Asalto',
+                                ),
+                              ),
+                            );
                           },
                         );
                       }).whereType<Marker>(),
@@ -469,16 +457,15 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           icono: iconoServiciosPublicos,
                           color: colorServiciosPublicos,
                           onTap: () {
-                            showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: const Text('Servicios Públicos'),
-                                      content: Text(
-                                        'Tipo de problema: ${reporte['TipoProblema']}\n\n'
-                                        'Tiempo estimado sin atención: ${reporte['TiempoEstimadoSinAtencion']}',
-                                      ),
-                                    ),
-                                  );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetalleReporte(
+                                  reporte: reporte,
+                                  tipo: 'Servicios Públicos',
+                                ),
+                              ),
+                            );
                           },
                         );
                       }).whereType<Marker>(),
@@ -497,18 +484,15 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           icono: iconoGeneral,
                           color: colorGeneral,
                           onTap: () {
-                            showDialog(
-                                    context: context,
-                                    builder: (_) => AlertDialog(
-                                      title: const Text('Reporte General'),
-                                      content: Text(
-                                        'Tipo de situación reportada: ${reporte['TipoSituacionReportada']}\n\n'
-                                        'Personas o elementos involucrados: ${reporte['PersonasElementosInvolucrados']}\n\n'
-                                        'Frecuencia o recurrencia del hecho: ${reporte['FrecuenciaRecurrenciaHecho']}\n\n'
-                                        'Observaciones adicionales: ${reporte['ObservacionesAdicionales']}',
-                                      ),
-                                    ),
-                                  );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => DetalleReporte(
+                                  reporte: reporte,
+                                  tipo: 'Reporte General',
+                                ),
+                              ),
+                            );
                           },
                         );
                       }).whereType<Marker>(),
