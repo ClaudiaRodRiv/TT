@@ -2,6 +2,11 @@ USE ReportesCiudadanos;
 
 SELECT * FROM Reportes;
 
+DELETE FROM ReporteServiciosPublicos WHERE ReporteId = 10001;
+DELETE FROM Reportes WHERE IdReporte = 10001;
+ALTER TABLE Reportes AUTO_INCREMENT = 10001;
+ALTER TABLE ReporteServiciosPublicos AUTO_INCREMENT = 10001;
+
 SELECT Reportes.*, ReporteCorrupcion.* FROM Reportes INNER JOIN ReporteCorrupcion ON Reportes.IdReporte = ReporteCorrupcion.ReporteId;
 
 SELECT Reportes.*, ReporteNarcomenudeo.* FROM Reportes INNER JOIN ReporteNarcomenudeo ON Reportes.IdReporte = ReporteNarcomenudeo.ReporteId;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
+import '../services/api_service.dart';
 
 class PantallaReporte extends StatefulWidget {
   const PantallaReporte({super.key});
@@ -10,6 +10,8 @@ class PantallaReporte extends StatefulWidget {
 class _PantallaReporteState extends State<PantallaReporte> {
   String tipoReporteSeleccionado = 'Servicios Públicos';
   final Map<String, List<Map<String, dynamic>>> camposPorTipo = {};
+  final Map<String, dynamic> valores = {};
+
   static const paddingCard = EdgeInsets.symmetric(horizontal: 16, vertical: 8);
 
   @override
@@ -42,68 +44,14 @@ class _PantallaReporteState extends State<PantallaReporte> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Material(
-                  elevation: 3,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: tipoReporteSeleccionado,
-                        isExpanded: true,
-                        style: theme.textTheme.bodyMedium,
-                        items: camposPorTipo.keys
-                            .map(
-                              (tipo) => DropdownMenuItem(
-                                value: tipo,
-                                child: Text(tipo),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (valor) =>
-                            setState(() => tipoReporteSeleccionado = valor!),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _dropdownTipo(theme),
               const SizedBox(height: 24),
               _cabeceraReporte(tipoReporteSeleccionado, theme),
               const SizedBox(height: 16),
-              ...camposPorTipo[tipoReporteSeleccionado]!.map(
-                (campo) => _crearCampo(campo, theme),
-              ),
+              ...camposPorTipo[tipoReporteSeleccionado]!
+                  .map((campo) => _crearCampo(campo, theme)),
               const SizedBox(height: 30),
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1A374D),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 6,
-                  ),
-                  child: Text(
-                    'Enviar Reporte',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: Colors.white70,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
+              _botonEnviar(theme),
             ],
           ),
         ),
@@ -111,25 +59,78 @@ class _PantallaReporteState extends State<PantallaReporte> {
     );
   }
 
-  Widget _crearCard({required Widget child, VoidCallback? onTap}) => Card(
-    elevation: 4,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    child: InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(padding: paddingCard, child: child),
-    ),
-  );
+  // ================= UI =================
+
+  Widget _dropdownTipo(ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Material(
+        elevation: 3,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: tipoReporteSeleccionado,
+              isExpanded: true,
+              style: theme.textTheme.bodyMedium,
+              items: camposPorTipo.keys
+                  .map((tipo) => DropdownMenuItem(
+                        value: tipo,
+                        child: Text(tipo),
+                      ))
+                  .toList(),
+              onChanged: (valor) => setState(() {
+                tipoReporteSeleccionado = valor!;
+                valores.clear(); // 🔥 limpia al cambiar tipo
+              }),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _botonEnviar(ThemeData theme) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: _enviarReporte,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1A374D),
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 16),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 6,
+        ),
+        child: Text(
+          'Enviar Reporte',
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: Colors.white70,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _cabeceraReporte(String tipo, ThemeData theme) {
     final map = {
       'Servicios Públicos': [Icons.construction, Colors.blue.shade800],
       'Robo o Asalto': [Icons.lock_open, Colors.purple.shade400],
-      'Corrupción u omisión de servidor público': [Icons.account_balance, Colors.pink.shade800],
+      'Corrupción u omisión de servidor público': [
+        Icons.account_balance,
+        Colors.pink.shade800
+      ],
       'Violencia de Género': [Icons.female, Colors.pinkAccent],
       'Narcomenudeo': [Icons.local_police, Colors.cyan.shade400],
       'Reporte General': [Icons.description, Colors.deepOrangeAccent],
     };
+
     final icon = map[tipo]![0] as IconData;
     final color = map[tipo]![1] as Color;
 
@@ -138,14 +139,13 @@ class _PantallaReporteState extends State<PantallaReporte> {
         CircleAvatar(
           radius: 22,
           backgroundColor: color,
-          child: Icon(icon, color: Colors.white, size: 24),
+          child: Icon(icon, color: Colors.white),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
             tipo,
             style: theme.textTheme.headlineSmall?.copyWith(
-              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: color,
             ),
@@ -156,82 +156,101 @@ class _PantallaReporteState extends State<PantallaReporte> {
   }
 
   Widget _subtitulo(String texto, ThemeData theme) => Padding(
-    padding: const EdgeInsets.only(left: 4, bottom: 4, top: 12),
-    child: Text(
-      texto,
-      style: theme.textTheme.labelLarge?.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: Colors.grey,
-      ),
-    ),
-  );
+        padding: const EdgeInsets.only(left: 4, bottom: 4, top: 12),
+        child: Text(
+          texto,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: Colors.grey,
+          ),
+        ),
+      );
+
+  Widget _crearCard({required Widget child, VoidCallback? onTap}) => Card(
+        elevation: 4,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(padding: paddingCard, child: child),
+        ),
+      );
+
+  // ================= CAMPOS =================
 
   Widget _crearCampo(Map<String, dynamic> campo, ThemeData theme) {
-    final estiloTexto = theme.textTheme.bodyMedium;
-
-    InputDecoration decoracion({
-      required String label,
-      Widget? prefixIcon,
-      Widget? suffixIcon,
-      EdgeInsetsGeometry? padding,
-    }) => InputDecoration(
-      labelText: label,
-      border: InputBorder.none,
-      isDense: true,
-      contentPadding: padding ?? const EdgeInsets.symmetric(vertical: 12),
-      prefixIcon: prefixIcon,
-      suffixIcon: suffixIcon,
-      labelStyle: estiloTexto,
-      hintStyle: estiloTexto,
-    );
-
     switch (campo['tipo']) {
       case 'text':
         return _crearCard(
           child: TextField(
-            keyboardType: campo['multiline'] == true
-                ? TextInputType.multiline
-                : TextInputType.text,
+            onChanged: (v) => setState(() {
+              valores[campo['label']] = v;
+            }),
             maxLines: campo['multiline'] == true ? null : 1,
-            style: estiloTexto,
-            decoration: decoracion(label: campo['label']),
+            decoration: InputDecoration(labelText: campo['label']),
           ),
         );
 
       case 'dropdown':
-        final opciones = (campo['opciones'] as List)
-            .map((e) => e.toString())
-            .toList();
         return _crearCard(
-          child: DropdownButtonFormField<String>(
-            initialValue: null,
-            decoration: decoracion(
-              label: campo['label'],
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-            ),
-            style: estiloTexto,
-            isExpanded: true,
-            items: opciones
-                .map(
-                  (o) => DropdownMenuItem(
-                    value: o,
-                    child: Text(o, style: estiloTexto),
-                  ),
-                )
-                .toList(),
-            onChanged: (valor) {},
+          child: Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  initialValue: (campo['opciones'] as List)
+                          .map((e) => e.toString())
+                          .contains(valores[campo['label']])
+                      ? valores[campo['label']]
+                      : null,
+                  isExpanded: true,
+                  decoration: InputDecoration(labelText: campo['label']),
+                  items: (campo['opciones'] as List)
+                      .map((o) => DropdownMenuItem(
+                            value: o.toString(),
+                            child: Text(
+                              o,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ))
+                      .toList(),
+                  onChanged: (v) => setState(() {
+                    valores[campo['label']] = v;
+                  }),
+                ),
+              ),
+            ],
           ),
         );
+
+      case 'subtitulo':
+        return _subtitulo(campo['label'], theme);
 
       case 'date':
         return _crearCard(
           child: TextField(
             readOnly: true,
-            style: estiloTexto,
-            decoration: decoracion(
-              label: campo['label'],
-              suffixIcon: const Icon(Icons.calendar_today, color: Colors.black),
+            controller: TextEditingController(
+              text: valores[campo['label']] != null
+                  ? valores[campo['label']].toString().split(' ')[0]
+                  : '',
+            ),
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+              );
+
+              if (pickedDate != null) {
+                setState(() {
+                  valores[campo['label']] = pickedDate;
+                });
+              }
+            },
+            decoration: InputDecoration(
+              labelText: campo['label'],
+              suffixIcon: Icon(Icons.calendar_today),
             ),
           ),
         );
@@ -241,49 +260,116 @@ class _PantallaReporteState extends State<PantallaReporte> {
           onTap: () {},
           child: TextField(
             readOnly: true,
-            style: estiloTexto,
-            decoration: decoracion(
-              label: campo['label'],
-              prefixIcon: const Icon(Icons.camera_alt, color: Colors.black),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            decoration: InputDecoration(
+              labelText: campo['label'],
+              prefixIcon: Icon(Icons.camera_alt),
             ),
-          ),
-        );
-
-      case 'subtitulo':
-        return _subtitulo(campo['label'], theme);
-
-      case 'number':
-        int valorInicial = 0;
-        return _crearCard(
-          child: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(campo['label'], style: estiloTexto),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    width: double.infinity,
-                    child: NumberPicker(
-                      value: valorInicial,
-                      minValue: 0,
-                      maxValue: 1000,
-                      step: 1,
-                      axis: Axis.horizontal,
-                      onChanged: (valor) =>
-                          setState(() => valorInicial = valor),
-                    ),
-                  ),
-                ],
-              );
-            },
           ),
         );
 
       default:
         return const SizedBox();
     }
+  }
+
+  // ================= ENVÍO =================
+
+  void _enviarReporte() async {
+    final tipoMap = {
+      'Servicios Públicos': 1,
+      'Robo o Asalto': 2,
+      'Corrupción u omisión de servidor público': 3,
+      'Violencia de Género': 4,
+      'Narcomenudeo': 5,
+      'Reporte General': 6,
+    };
+
+    final tipoId = tipoMap[tipoReporteSeleccionado];
+
+    Map<String, dynamic> detalle = {};
+
+    switch (tipoId) {
+      case 1:
+        detalle = {
+          "tipoProblema": valores['Tipo de problema'],
+          "tiempoEstimadoSinAtencion": int.tryParse(valores['Tiempo estimado sin atención (Días)'] ?? ''),
+        };
+        break;
+      case 2:
+        detalle = {
+          "tipoIncidente": valores['Tipo de incidente'],
+          "objetosRobados": valores['Objetos robados'],
+          "numeroAgresores": valores['Número de agresores'],
+          "descripcionAgresores": valores['Descripción de los agresores'],
+          "medioTransporteUtilizado": valores['Medio de transporte utilizado'],
+          "armaUtilizada": valores['Arma utilizada'],
+        };
+        break;
+      case 3:
+        detalle = {
+          "tipoFaltaReportada": valores['Tipo de falta reportada'],
+          "dependencia": valores['Dependencia o institución involucrada'],
+          "nombreServidor": valores['Nombre del servidor público'],
+          "cargoServidor": valores['Cargo del servidor público'],
+        };
+        break;
+      case 4:
+        detalle = {
+          "tipoViolencia": valores['Tipo de violencia'],
+          "relacion": valores['Relación con la persona agresora'],
+          "nombreAgresor": valores['Nombre o alias del agresor'],
+        };
+        break;
+      case 5:
+        detalle = {
+          "tipoActividad": valores['Tipo de actividad sospechosa'],
+          "numeroPersonas": valores['Número de personas involucradas'],
+          "descripcionPersonas": valores['Descripción de las personas involucradas'],
+          "vehiculos": valores['Vehículos relacionados'],
+          "frecuencia": valores['Frecuencia del suceso'],
+        };
+        break;
+      case 6:
+        detalle = {
+          "tipoSituacion": valores['Tipo de situación reportada'],
+          "personas": valores['Personas o elementos involucrados'],
+          "frecuencia": valores['Frecuencia o recurrencia del hecho'],
+          "observaciones": valores['Observaciones adicionales'],
+        };
+        break;
+    }
+
+    final data = {
+      "folioSUAC": valores['Folio SUAC'],
+      "tipoReporteId": tipoId,
+      "descripcion": 
+        valores['Descripción del problema'] ??
+          valores['Descripción del incidente'] ??
+          valores['Descripción del hecho'] ??
+          valores['Descripción detallada del hecho'],
+      "fecha": (valores['Fecha del reporte'] ??
+          valores['Fecha del incidente'] ??
+          valores['Fecha del hecho'] ??
+          valores['Fecha del suceso'] ??
+          DateTime.now()).toString(),
+      "nombreCiudadano": valores['Nombre o alias del ciudadano'],
+      "latitud": 19.3919620,
+      "longitud": -99.1513163,
+      "detalle": detalle
+    };
+
+    try {
+      await ApiService.createReporte(data);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Reporte enviado correctamente')),
+      );
+    } catch (e) {
+  print("ERROR COMPLETO: $e");
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Error: $e')),
+  );
+}
   }
 
   // Campos para reporte de Servicios Públicos
@@ -293,7 +379,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
     {'tipo': 'dropdown', 'label': 'Tipo de problema',
       'opciones': [
         'Bache/socavón',
-        'Alumbrado público con falla',
+        'Alumbrado con falla',
         'Falta de señalización',
         'Obstrucción de vía',
         'Basura',
@@ -302,7 +388,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
         'Mobiliario urbano dañado' ],},
     {'tipo': 'text', 'label': 'Descripción del problema', 'multiline': true},
     {'tipo': 'date', 'label': 'Fecha del reporte'},
-    {'tipo': 'number', 'label': 'Tiempo estimado sin atención'},
+    {'tipo': 'text', 'label': 'Tiempo estimado sin atención (Días)'},
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
     {'tipo': 'foto', 'label': 'Evidencia'}
@@ -321,7 +407,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
     {'tipo': 'text', 'label': 'Objetos robados', 'multiline': true},
-    {'tipo': 'number', 'label': 'Número de agresores'},
+    {'tipo': 'text', 'label': 'Número de agresores'},
     {'tipo': 'text', 'label': 'Descripción de los agresores', 'multiline': true,},
     {'tipo': 'dropdown', 'label': 'Medio de transporte utilizado',
       'opciones': [
@@ -401,7 +487,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
     {'tipo': 'date', 'label': 'Fecha del hecho'},
     {'tipo': 'subtitulo', 'label': 'Campos opcionales'},
     {'tipo': 'text', 'label': 'Nombre o alias del ciudadano'},
-    {'tipo': 'number', 'label': 'Número de personas involucradas'},
+    {'tipo': 'text', 'label': 'Número de personas involucradas'},
     {'tipo': 'text', 'label': 'Descripción de las personas involucradas', 'multiline': true},
     {'tipo': 'text', 'label': 'Vehículos relacionados', 'multiline': true},
     {'tipo': 'dropdown', 'label': 'Frecuencia del suceso',

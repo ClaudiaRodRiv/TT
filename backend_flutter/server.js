@@ -169,6 +169,152 @@ app.get('/evidencias/:reporteId', (req, res) => {
   );
 });
 
+// Insertar todos los tipos de reportes
+app.post('/crearreporte', (req, res) => {
+  const {
+    folioSUAC,
+    tipoReporteId,
+    descripcion,
+    fecha,
+    nombreCiudadano,
+    latitud,
+    longitud,
+    detalle
+  } = req.body;
+
+  // Insertar en Reportes
+  const queryReporte = `
+    INSERT INTO Reportes 
+    (FolioSUAC, TipoReporteId, Descripcion, Fecha, NombreCiudadano, Latitud, Longitud)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    queryReporte,
+    [folioSUAC, tipoReporteId, descripcion, fecha, nombreCiudadano, latitud, longitud],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Error al insertar reporte');
+      }
+
+      const reporteId = result.insertId;
+
+      // Insertar en tabla específica
+      let queryDetalle = '';
+      let values = [];
+
+      switch (tipoReporteId) {
+        case 1: // Servicios públicos
+          queryDetalle = `
+            INSERT INTO ReporteServiciosPublicos
+            (ReporteId, TipoProblema, TiempoEstimadoSinAtencion)
+            VALUES (?, ?, ?)
+          `;
+          values = [
+            reporteId,
+            detalle.tipoProblema,
+            detalle.tiempoEstimadoSinAtencion
+          ];
+          break;
+
+        case 2: // Robo o asalto
+          queryDetalle = `
+            INSERT INTO ReporteRoboAsalto
+            (ReporteId, TipoIncidente, ObjetosRobados, NumeroAgresores, DescripcionAgresores, MedioTransporteUtilizado, ArmaUtilizada)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+          `;
+          values = [
+            reporteId,
+            detalle.tipoIncidente,
+            detalle.objetosRobados,
+            detalle.numeroAgresores,
+            detalle.descripcionAgresores,
+            detalle.medioTransporteUtilizado,
+            detalle.armaUtilizada
+          ];
+          break;
+
+        case 3: // Corrupción
+          queryDetalle = `
+            INSERT INTO ReporteCorrupcion
+            (ReporteId, TipoFaltaReportada, DependenciaInstitucionInvolucrada, NombreServidorPublico, CargoServidorPublico)
+            VALUES (?, ?, ?, ?, ?)
+          `;
+          values = [
+            reporteId,
+            detalle.tipoFaltaReportada,
+            detalle.dependencia,
+            detalle.nombreServidor,
+            detalle.cargoServidor
+          ];
+          break;
+
+        case 4: // Violencia de género
+          queryDetalle = `
+            INSERT INTO ReporteViolenciaGenero
+            (ReporteId, TipoViolencia, RelacionPersonaAgresora, NombreAgresor)
+            VALUES (?, ?, ?, ?)
+          `;
+          values = [
+            reporteId,
+            detalle.tipoViolencia,
+            detalle.relacion,
+            detalle.nombreAgresor
+          ];
+          break;
+
+        case 5: // Narcomenudeo
+          queryDetalle = `
+            INSERT INTO ReporteNarcomenudeo
+            (ReporteId, TipoActividadSospechosa, NumeroPersonasInvolucradas, DescripcionPersonasInvolucradas, VehiculosRelacionados, FrecuenciaSuceso)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `;
+          values = [
+            reporteId,
+            detalle.tipoActividad,
+            detalle.numeroPersonas,
+            detalle.descripcionPersonas,
+            detalle.vehiculos,
+            detalle.frecuencia
+          ];
+          break;
+
+        case 6: // General
+          queryDetalle = `
+            INSERT INTO ReporteGeneral
+            (ReporteId, TipoSituacionReportada, PersonasElementosInvolucrados, FrecuenciaRecurrenciaHecho, ObservacionesAdicionales)
+            VALUES (?, ?, ?, ?, ?)
+          `;
+          values = [
+            reporteId,
+            detalle.tipoSituacion,
+            detalle.personas,
+            detalle.frecuencia,
+            detalle.observaciones
+          ];
+          break;
+
+        default:
+          return res.status(400).send('Tipo de reporte inválido');
+      }
+
+      // Ejecutar inserción específica
+      db.query(queryDetalle, values, (err2) => {
+        if (err2) {
+          console.error(err2);
+          return res.status(500).send('Error al insertar detalle');
+        }
+
+        res.json({
+          mensaje: 'Reporte creado correctamente',
+          reporteId
+        });
+      });
+    }
+  );
+});
+
 app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000');
 });

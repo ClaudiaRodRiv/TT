@@ -214,8 +214,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
   }
 
   Color obtenerColor(int total) {
-    if (total < 250) return Colors.green;
-    if (total < 500) return Colors.orange;
+    if (total < 500) return Colors.green;
+    if (total < 1000) return Colors.orange;
     return Colors.red;
   }
 
@@ -334,6 +334,7 @@ class _PantallaMapaState extends State<PantallaMapa> {
 
                 if (zoomActual >= 14)
                   MarkerLayer(
+                    key: ValueKey(DateTime.now().millisecondsSinceEpoch),
                     markers: [
                       ...reportesCorrupcion.map((reporte) {
                         final lat = double.tryParse(
@@ -348,8 +349,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           lng: lng,
                           icono: iconoCorrupcion,
                           color: colorCorrupcion,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DetalleReporte(
@@ -358,6 +359,14 @@ class _PantallaMapaState extends State<PantallaMapa> {
                                 ),
                               ),
                             );
+                            await obtenerTodosLosReportes();
+                            await obtenerReportesCorrupcion();
+                            await obtenerReportesNarcomenudeo();
+                            await obtenerReportesViolenciaGenero();
+                            await obtenerReportesRoboAsalto();
+                            await obtenerReportesServiciosPublicos();
+                            await obtenerReportesGenerales();
+                            await cargarPoligonos();
                           },
                         );
                       }).whereType<Marker>(),
@@ -375,8 +384,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           lng: lng,
                           icono: iconoNarcomenudeo,
                           color: colorNarcomenudeo,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DetalleReporte(
@@ -385,6 +394,14 @@ class _PantallaMapaState extends State<PantallaMapa> {
                                 ),
                               ),
                             );
+                            await obtenerTodosLosReportes();
+                            await obtenerReportesCorrupcion();
+                            await obtenerReportesNarcomenudeo();
+                            await obtenerReportesViolenciaGenero();
+                            await obtenerReportesRoboAsalto();
+                            await obtenerReportesServiciosPublicos();
+                            await obtenerReportesGenerales();
+                            await cargarPoligonos();
                           },
                         );
                       }).whereType<Marker>(),
@@ -402,8 +419,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           lng: lng,
                           icono: iconoViolenciaGenero,
                           color: colorViolenciaGenero,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DetalleReporte(
@@ -412,6 +429,14 @@ class _PantallaMapaState extends State<PantallaMapa> {
                                 ),
                               ),
                             );
+                            await obtenerTodosLosReportes();
+                            await obtenerReportesCorrupcion();
+                            await obtenerReportesNarcomenudeo();
+                            await obtenerReportesViolenciaGenero();
+                            await obtenerReportesRoboAsalto();
+                            await obtenerReportesServiciosPublicos();
+                            await obtenerReportesGenerales();
+                            await cargarPoligonos();
                           },
                         );
                       }).whereType<Marker>(),
@@ -429,8 +454,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           lng: lng,
                           icono: iconoRoboAsalto,
                           color: colorRoboAsalto,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DetalleReporte(
@@ -439,6 +464,14 @@ class _PantallaMapaState extends State<PantallaMapa> {
                                 ),
                               ),
                             );
+                            await obtenerTodosLosReportes();
+                            await obtenerReportesCorrupcion();
+                            await obtenerReportesNarcomenudeo();
+                            await obtenerReportesViolenciaGenero();
+                            await obtenerReportesRoboAsalto();
+                            await obtenerReportesServiciosPublicos();
+                            await obtenerReportesGenerales();
+                            await cargarPoligonos();
                           },
                         );
                       }).whereType<Marker>(),
@@ -456,8 +489,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           lng: lng,
                           icono: iconoServiciosPublicos,
                           color: colorServiciosPublicos,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                           await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DetalleReporte(
@@ -466,6 +499,14 @@ class _PantallaMapaState extends State<PantallaMapa> {
                                 ),
                               ),
                             );
+                            await obtenerTodosLosReportes();
+                            await obtenerReportesCorrupcion();
+                            await obtenerReportesNarcomenudeo();
+                            await obtenerReportesViolenciaGenero();
+                            await obtenerReportesRoboAsalto();
+                            await obtenerReportesServiciosPublicos();
+                            await obtenerReportesGenerales();
+                            await cargarPoligonos();
                           },
                         );
                       }).whereType<Marker>(),
@@ -483,8 +524,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           lng: lng,
                           icono: iconoGeneral,
                           color: colorGeneral,
-                          onTap: () {
-                            Navigator.push(
+                          onTap: () async {
+                            await Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => DetalleReporte(
@@ -493,6 +534,14 @@ class _PantallaMapaState extends State<PantallaMapa> {
                                 ),
                               ),
                             );
+                            await obtenerTodosLosReportes();
+                            await obtenerReportesCorrupcion();
+                            await obtenerReportesNarcomenudeo();
+                            await obtenerReportesViolenciaGenero();
+                            await obtenerReportesRoboAsalto();
+                            await obtenerReportesServiciosPublicos();
+                            await obtenerReportesGenerales();
+                            await cargarPoligonos();
                           },
                         );
                       }).whereType<Marker>(),
@@ -520,11 +569,22 @@ class _PantallaMapaState extends State<PantallaMapa> {
               bottom: 30,
               right: 30,
               child: FloatingActionButton(
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const PantallaReporte()),
-                ),
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PantallaReporte(),
+                    ),
+                  );
+                  await obtenerTodosLosReportes();
+                  await obtenerReportesCorrupcion();
+                  await obtenerReportesNarcomenudeo();
+                  await obtenerReportesViolenciaGenero();
+                  await obtenerReportesRoboAsalto();
+                  await obtenerReportesServiciosPublicos();
+                  await obtenerReportesGenerales();
+                  await cargarPoligonos();
+                },
                 backgroundColor: azulApp,
                 child: const Icon(Icons.add, color: Colors.white),
               ),
