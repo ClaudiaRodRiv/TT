@@ -28,6 +28,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
   List<Polygon> poligonos = [];
 
   double zoomActual = 12;
+  LatLng? ubicacionSeleccionada;
+  bool ubicacionLista = false;
 
   final LatLngBounds limitesCDMX = LatLngBounds(
     LatLng(19.00, -99.40),
@@ -321,6 +323,12 @@ class _PantallaMapaState extends State<PantallaMapa> {
                       });
                     }
                   },
+                  onTap: (tapPosition, point) {
+                    setState(() {
+                      ubicacionSeleccionada = point;
+                      ubicacionLista = true;
+                    });
+                  },
                 ),
               children: [
                 TileLayer(
@@ -336,6 +344,39 @@ class _PantallaMapaState extends State<PantallaMapa> {
                   MarkerLayer(
                     key: ValueKey(DateTime.now().millisecondsSinceEpoch),
                     markers: [
+                      if (ubicacionSeleccionada != null)
+                        Marker(
+                          point: ubicacionSeleccionada!,
+                          width: 60,
+                          height: 60,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withValues(alpha: 0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.location_on,
+                                  color: Colors.white,
+                                  size: 27,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
                       ...reportesCorrupcion.map((reporte) {
                         final lat = double.tryParse(
                             reporte['latitud'].toString());
@@ -569,23 +610,36 @@ class _PantallaMapaState extends State<PantallaMapa> {
               bottom: 30,
               right: 30,
               child: FloatingActionButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const PantallaReporte(),
-                    ),
-                  );
-                  await obtenerTodosLosReportes();
-                  await obtenerReportesCorrupcion();
-                  await obtenerReportesNarcomenudeo();
-                  await obtenerReportesViolenciaGenero();
-                  await obtenerReportesRoboAsalto();
-                  await obtenerReportesServiciosPublicos();
-                  await obtenerReportesGenerales();
-                  await cargarPoligonos();
-                },
-                backgroundColor: azulApp,
+                onPressed: ubicacionLista
+                    ? () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PantallaReporte(
+                              latitud: ubicacionSeleccionada!.latitude,
+                              longitud: ubicacionSeleccionada!.longitude,
+                            ),
+                          ),
+                        );
+
+                        setState(() {
+                          ubicacionSeleccionada = null;
+                          ubicacionLista = false;
+                        });
+
+                        await obtenerTodosLosReportes();
+                        await obtenerReportesCorrupcion();
+                        await obtenerReportesNarcomenudeo();
+                        await obtenerReportesViolenciaGenero();
+                        await obtenerReportesRoboAsalto();
+                        await obtenerReportesServiciosPublicos();
+                        await obtenerReportesGenerales();
+                        await cargarPoligonos();
+                      }
+                    : null,
+
+                backgroundColor: ubicacionLista ? azulApp : Colors.grey,
+
                 child: const Icon(Icons.add, color: Colors.white),
               ),
             ),

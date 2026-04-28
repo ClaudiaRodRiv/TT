@@ -3,7 +3,7 @@ import 'dart:convert';
 
 class ApiService {
 
-  static const String baseUrl = 'http://192.168.0.22:3000';
+  static const String baseUrl = 'https://tt-mm4g.onrender.com';
 
   static Future<List<dynamic>> getReportes() async {
     final response = await http.get(

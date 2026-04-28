@@ -2,12 +2,24 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 
 class PantallaReporte extends StatefulWidget {
-  const PantallaReporte({super.key});
+  final double latitud;
+  final double longitud;
+
+  const PantallaReporte({
+    super.key,
+    required this.latitud,
+    required this.longitud,
+  });
+
   @override
   State<PantallaReporte> createState() => _PantallaReporteState();
 }
 
 class _PantallaReporteState extends State<PantallaReporte> {
+
+  double get latitud => widget.latitud;
+  double get longitud => widget.longitud;
+
   String tipoReporteSeleccionado = 'Servicios Públicos';
   final Map<String, List<Map<String, dynamic>>> camposPorTipo = {};
   final Map<String, dynamic> valores = {};
@@ -59,7 +71,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
     );
   }
 
-  // ================= UI =================
+  // UI
 
   Widget _dropdownTipo(ThemeData theme) {
     return Padding(
@@ -176,7 +188,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
         ),
       );
 
-  // ================= CAMPOS =================
+  // Campos
 
   Widget _crearCampo(Map<String, dynamic> campo, ThemeData theme) {
     switch (campo['tipo']) {
@@ -272,7 +284,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
     }
   }
 
-  // ================= ENVÍO =================
+  // Envío
 
   void _enviarReporte() async {
     final tipoMap = {
@@ -346,6 +358,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
         valores['Descripción del problema'] ??
           valores['Descripción del incidente'] ??
           valores['Descripción del hecho'] ??
+          valores['Descripción del hecho o actividad'] ??
           valores['Descripción detallada del hecho'],
       "fecha": (valores['Fecha del reporte'] ??
           valores['Fecha del incidente'] ??
@@ -353,8 +366,8 @@ class _PantallaReporteState extends State<PantallaReporte> {
           valores['Fecha del suceso'] ??
           DateTime.now()).toString(),
       "nombreCiudadano": valores['Nombre o alias del ciudadano'],
-      "latitud": 19.3919620,
-      "longitud": -99.1513163,
+      "latitud": latitud,
+      "longitud": longitud,
       "detalle": detalle
     };
 
