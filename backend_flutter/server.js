@@ -13,308 +13,205 @@ app.get('/', (req, res) => {
 });
 
 // Todos los reportes
-app.get('/reportes', (req, res) => {
-  db.query('SELECT * FROM Reportes', (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-      return;
-    }
-    res.json(result);
-  });
+app.get('/reportes', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM reportes');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
-// Reportes de corrupción u omisión de servidor público 
-app.get('/reportescorrupcion', (req, res) => {
-
-  const query = `
-    SELECT Reportes.*, ReporteCorrupcion.*
-    FROM Reportes
-    INNER JOIN ReporteCorrupcion
-    ON Reportes.IdReporte = ReporteCorrupcion.ReporteId;
-  `;
-
-  db.query(query, (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-      return;
-    }
-    res.json(result);
-  });
+// Reportes de corrupción
+app.get('/reportescorrupcion', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT r.*, rc.*
+      FROM reportes r
+      INNER JOIN reportecorrupcion rc
+      ON r.idreporte = rc.reporteid
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
 // Reportes de narcomenudeo
-app.get('/reportesnarcomenudeo', (req, res) => {
-  const query = `
-    SELECT Reportes.*, ReporteNarcomenudeo.*
-    FROM Reportes
-    INNER JOIN ReporteNarcomenudeo
-    ON Reportes.IdReporte = ReporteNarcomenudeo.ReporteId
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-    } else {
-      res.json(results);
-    }
-  });
+app.get('/reportesnarcomenudeo', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT r.*, rn.*
+      FROM reportes r
+      INNER JOIN reportenarcomenudeo rn
+      ON r.idreporte = rn.reporteid
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
-// Reportes de violencia de género
-app.get('/reportesviolenciagenero', (req, res) => {
-  const query = `
-    SELECT Reportes.*, ReporteViolenciaGenero.*
-    FROM Reportes
-    INNER JOIN ReporteViolenciaGenero
-    ON Reportes.IdReporte = ReporteViolenciaGenero.ReporteId
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-    } else {
-      res.json(results);
-    }
-  });
+// Reportes violencia género
+app.get('/reportesviolenciagenero', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT r.*, rv.*
+      FROM reportes r
+      INNER JOIN reporteviolenciagenero rv
+      ON r.idreporte = rv.reporteid
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
-// Reportes de robo o asalto
-app.get('/reportesroboasalto', (req, res) => {
-  const query = `
-  SELECT Reportes.*, ReporteRoboAsalto.*
-  FROM Reportes
-  INNER JOIN ReporteRoboAsalto
-  ON Reportes.IdReporte = ReporteRoboAsalto.ReporteId  
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-    } else {
-      res.json(results);
-    }
-  });
+// Reportes robo
+app.get('/reportesroboasalto', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT r.*, rr.*
+      FROM reportes r
+      INNER JOIN reporteroboasalto rr
+      ON r.idreporte = rr.reporteid
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
-// Reportes de servicios públicos
-app.get('/reportesserviciospublicos', (req, res) => {
-  const query = `
-  SELECT Reportes.*, ReporteServiciosPublicos.*
-  FROM Reportes
-  INNER JOIN ReporteServiciosPublicos
-  ON Reportes.IdReporte = ReporteServiciosPublicos.ReporteId
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-    } else {
-      res.json(results);
-    }
-  });
+// Servicios públicos
+app.get('/reportesserviciospublicos', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT r.*, rs.*
+      FROM reportes r
+      INNER JOIN reporteserviciospublicos rs
+      ON r.idreporte = rs.reporteid
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
-// Reportes generales
-app.get('/reportesgenerales', (req, res) => {
-  const query = `
-  SELECT Reportes.*, ReporteGeneral.*
-  FROM Reportes
-  INNER JOIN ReporteGeneral
-  ON Reportes.IdReporte = ReporteGeneral.ReporteId
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-    } else {
-      res.json(results);
-    }
-  });
+// Generales
+app.get('/reportesgenerales', async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT r.*, rg.*
+      FROM reportes r
+      INNER JOIN reportegeneral rg
+      ON r.idreporte = rg.reporteid
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
-// Todos las instituciones
-app.get('/instituciones', (req, res) => {
-  db.query('SELECT * FROM Instituciones', (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error en la consulta');
-      return;
-    }
-    res.json(result);
-  });
+// Instituciones
+app.get('/instituciones', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM instituciones');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
 // Evidencias
-app.get('/evidencias/:reporteId', (req, res) => {
-  const { reporteId } = req.params;
-
-  db.query(
-    'SELECT * FROM Evidencias WHERE ReporteId = ?',
-    [reporteId],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Error en la consulta');
-        return;
-      }
-      res.json(result);
-    }
-  );
+app.get('/evidencias/:reporteId', async (req, res) => {
+  try {
+    const { reporteId } = req.params;
+    const result = await db.query(
+      'SELECT * FROM evidencias WHERE reporteid = $1',
+      [reporteId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error en la consulta');
+  }
 });
 
-// Insertar todos los tipos de reportes
-app.post('/crearreporte', (req, res) => {
-  const {
-    folioSUAC,
-    tipoReporteId,
-    descripcion,
-    fecha,
-    nombreCiudadano,
-    latitud,
-    longitud,
-    detalle
-  } = req.body;
+// Crear reporte
+app.post('/crearreporte', async (req, res) => {
+  try {
+    const {
+      folioSUAC,
+      tipoReporteId,
+      descripcion,
+      fecha,
+      nombreCiudadano,
+      latitud,
+      longitud,
+      detalle
+    } = req.body;
 
-  // Insertar en Reportes
-  const queryReporte = `
-    INSERT INTO Reportes 
-    (FolioSUAC, TipoReporteId, Descripcion, Fecha, NombreCiudadano, Latitud, Longitud)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
-  `;
+    const result = await db.query(
+      `INSERT INTO reportes
+      (foliosuac, tiporeporteid, descripcion, fecha, nombreciudadano, latitud, longitud)
+      VALUES ($1,$2,$3,$4,$5,$6,$7)
+      RETURNING idreporte`,
+      [folioSUAC, tipoReporteId, descripcion, fecha, nombreCiudadano, latitud, longitud]
+    );
 
-  db.query(
-    queryReporte,
-    [folioSUAC, tipoReporteId, descripcion, fecha, nombreCiudadano, latitud, longitud],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send('Error al insertar reporte');
-      }
+    const reporteId = result.rows[0].idreporte;
 
-      const reporteId = result.insertId;
+    let queryDetalle = '';
+    let values = [];
 
-      // Insertar en tabla específica
-      let queryDetalle = '';
-      let values = [];
-
-      switch (tipoReporteId) {
-        case 1: // Servicios públicos
-          queryDetalle = `
-            INSERT INTO ReporteServiciosPublicos
-            (ReporteId, TipoProblema, TiempoEstimadoSinAtencion)
-            VALUES (?, ?, ?)
-          `;
-          values = [
-            reporteId,
-            detalle.tipoProblema,
-            detalle.tiempoEstimadoSinAtencion
-          ];
-          break;
-
-        case 2: // Robo o asalto
-          queryDetalle = `
-            INSERT INTO ReporteRoboAsalto
-            (ReporteId, TipoIncidente, ObjetosRobados, NumeroAgresores, DescripcionAgresores, MedioTransporteUtilizado, ArmaUtilizada)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-          `;
-          values = [
-            reporteId,
-            detalle.tipoIncidente,
-            detalle.objetosRobados,
-            detalle.numeroAgresores,
-            detalle.descripcionAgresores,
-            detalle.medioTransporteUtilizado,
-            detalle.armaUtilizada
-          ];
-          break;
-
-        case 3: // Corrupción
-          queryDetalle = `
-            INSERT INTO ReporteCorrupcion
-            (ReporteId, TipoFaltaReportada, DependenciaInstitucionInvolucrada, NombreServidorPublico, CargoServidorPublico)
-            VALUES (?, ?, ?, ?, ?)
-          `;
-          values = [
-            reporteId,
-            detalle.tipoFaltaReportada,
-            detalle.dependencia,
-            detalle.nombreServidor,
-            detalle.cargoServidor
-          ];
-          break;
-
-        case 4: // Violencia de género
-          queryDetalle = `
-            INSERT INTO ReporteViolenciaGenero
-            (ReporteId, TipoViolencia, RelacionPersonaAgresora, NombreAgresor)
-            VALUES (?, ?, ?, ?)
-          `;
-          values = [
-            reporteId,
-            detalle.tipoViolencia,
-            detalle.relacion,
-            detalle.nombreAgresor
-          ];
-          break;
-
-        case 5: // Narcomenudeo
-          queryDetalle = `
-            INSERT INTO ReporteNarcomenudeo
-            (ReporteId, TipoActividadSospechosa, NumeroPersonasInvolucradas, DescripcionPersonasInvolucradas, VehiculosRelacionados, FrecuenciaSuceso)
-            VALUES (?, ?, ?, ?, ?, ?)
-          `;
-          values = [
-            reporteId,
-            detalle.tipoActividad,
-            detalle.numeroPersonas,
-            detalle.descripcionPersonas,
-            detalle.vehiculos,
-            detalle.frecuencia
-          ];
-          break;
-
-        case 6: // General
-          queryDetalle = `
-            INSERT INTO ReporteGeneral
-            (ReporteId, TipoSituacionReportada, PersonasElementosInvolucrados, FrecuenciaRecurrenciaHecho, ObservacionesAdicionales)
-            VALUES (?, ?, ?, ?, ?)
-          `;
-          values = [
-            reporteId,
-            detalle.tipoSituacion,
-            detalle.personas,
-            detalle.frecuencia,
-            detalle.observaciones
-          ];
-          break;
-
-        default:
-          return res.status(400).send('Tipo de reporte inválido');
-      }
-
-      // Ejecutar inserción específica
-      db.query(queryDetalle, values, (err2) => {
-        if (err2) {
-          console.error(err2);
-          return res.status(500).send('Error al insertar detalle');
-        }
-
-        res.json({
-          mensaje: 'Reporte creado correctamente',
-          reporteId
-        });
-      });
+    switch (tipoReporteId) {
+      case 1:
+        queryDetalle = `INSERT INTO reporteserviciospublicos VALUES ($1,$2,$3)`;
+        values = [reporteId, detalle.tipoProblema, detalle.tiempoEstimadoSinAtencion];
+        break;
+      case 2:
+        queryDetalle = `INSERT INTO reporteroboasalto VALUES ($1,$2,$3,$4,$5,$6,$7)`;
+        values = [reporteId, detalle.tipoIncidente, detalle.objetosRobados, detalle.numeroAgresores, detalle.descripcionAgresores, detalle.medioTransporteUtilizado, detalle.armaUtilizada];
+        break;
+      case 3:
+        queryDetalle = `INSERT INTO reportecorrupcion VALUES ($1,$2,$3,$4,$5)`;
+        values = [reporteId, detalle.tipoFaltaReportada, detalle.dependencia, detalle.nombreServidor, detalle.cargoServidor];
+        break;
+      case 4:
+        queryDetalle = `INSERT INTO reporteviolenciagenero VALUES ($1,$2,$3,$4)`;
+        values = [reporteId, detalle.tipoViolencia, detalle.relacion, detalle.nombreAgresor];
+        break;
+      case 5:
+        queryDetalle = `INSERT INTO reportenarcomenudeo VALUES ($1,$2,$3,$4,$5,$6)`;
+        values = [reporteId, detalle.tipoActividad, detalle.numeroPersonas, detalle.descripcionPersonas, detalle.vehiculos, detalle.frecuencia];
+        break;
+      case 6:
+        queryDetalle = `INSERT INTO reportegeneral VALUES ($1,$2,$3,$4,$5)`;
+        values = [reporteId, detalle.tipoSituacion, detalle.personas, detalle.frecuencia, detalle.observaciones];
+        break;
+      default:
+        return res.status(400).send('Tipo de reporte inválido');
     }
-  );
+
+    await db.query(queryDetalle, values);
+
+    res.json({ mensaje: 'Reporte creado correctamente', reporteId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al insertar');
+  }
 });
 
-app.listen(3000, () => {
-  console.log('Servidor corriendo en http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
 });

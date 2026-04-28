@@ -42,11 +42,11 @@ class DetalleReporte extends StatelessWidget {
               }
 
               if ([
-                'IdReporte',
-                'TipoReporteId',
-                'Latitud',
-                'Longitud',
-                'ReporteId'
+                'idreporte',
+                'tiporeporteid',
+                'latitud',
+                'longitud',
+                'reporteid'
               ].contains(entry.key)) {
                 return const SizedBox();
               }
@@ -66,7 +66,7 @@ class DetalleReporte extends StatelessWidget {
                           ),
                         ),
 
-                        if (entry.key == 'FolioSUAC')
+                        if (entry.key == 'foliosuac')
                           IconButton(
                             icon: const Icon(Icons.copy, size: 18),
                             tooltip: 'Copiar folio',
@@ -101,7 +101,7 @@ class DetalleReporte extends StatelessWidget {
 
             FutureBuilder<List<dynamic>>(
               future: ApiService.getEvidencias(
-                reporte['IdReporte'] ?? reporte['ReporteId'],
+                reporte['idreporte'] ?? reporte['reporteid'],
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -128,7 +128,7 @@ class DetalleReporte extends StatelessWidget {
                     const SizedBox(height: 10),
 
                     ...evidencias.map((evidencia) {
-                      final url = evidencia['UrlArchivo'];
+                      final url = evidencia['urlarchivo'];
                       final esVideo = url.toString().contains('.mp4');
 
                       return Padding(
@@ -234,61 +234,61 @@ class DetalleReporte extends StatelessWidget {
   String _formatearCampo(String key) {
     const map = {
       // Reportes
-      'IdReporte': 'ID del reporte',
-      'FolioSUAC': 'Folio SUAC',
-      'TipoReporteId': 'Tipo de reporte',
-      'Descripcion': 'Descripción',
-      'Fecha': 'Fecha',
-      'NombreCiudadano': 'Ciudadano',
-      'Latitud': 'Latitud',
-      'Longitud': 'Longitud',
+      'idreporte': 'ID del reporte',
+      'foliosuac': 'Folio SUAC',
+      'tiporeporteid': 'Tipo de reporte',
+      'descripcion': 'Descripción',
+      'fecha': 'Fecha',
+      'nombreciudadano': 'Ciudadano',
+      'latitud': 'Latitud',
+      'longitud': 'Longitud',
 
       // Instituciones
-      'NombreInstitucion': 'Institución',
-      'Telefono': 'Teléfono',
-      'CorreoElectronico': 'Correo electrónico',
-      'HorarioAtencion': 'Horario de atención',
-      'Direccion': 'Dirección',
-      'EnlaceWeb': 'Sitio web',
+      'nombreinstitucion': 'Institución',
+      'telefono': 'Teléfono',
+      'correoelectronico': 'Correo electrónico',
+      'horarioatencion': 'Horario de atención',
+      'direccion': 'Dirección',
+      'enlaceweb': 'Sitio web',
 
       // Servicios Públicos
-      'TipoProblema': 'Tipo de problema',
-      'TiempoEstimadoSinAtencion': 'Tiempo sin atención',
+      'tipoproblema': 'Tipo de problema',
+      'tiempoestimadosinatencion': 'Tiempo sin atención',
 
       // Robo o Asalto
-      'TipoIncidente': 'Tipo de incidente',
-      'ObjetosRobados': 'Objetos robados',
-      'NumeroAgresores': 'Número de agresores',
-      'DescripcionAgresores': 'Descripción de agresores',
-      'MedioTransporteUtilizado': 'Medio de transporte',
-      'ArmaUtilizada': 'Arma utilizada',
+      'tipoincidente': 'Tipo de incidente',
+      'objetosrobados': 'Objetos robados',
+      'numeroagresores': 'Número de agresores',
+      'descripcionagresores': 'Descripción de agresores',
+      'mediotransporteutilizado': 'Medio de transporte',
+      'armautilizada': 'Arma utilizada',
 
       // Corrupción
-      'TipoFaltaReportada': 'Tipo de falta',
-      'DependenciaInstitucionInvolucrada': 'Dependencia',
-      'NombreServidorPublico': 'Servidor público',
-      'CargoServidorPublico': 'Cargo del servidor',
+      'tipofaltareportada': 'Tipo de falta',
+      'dependenciainstitucioninvolucrada': 'Dependencia',
+      'nombreservidorpublico': 'Servidor público',
+      'cargoservidorpublico': 'Cargo del servidor',
 
       // Violencia de Género
-      'TipoViolencia': 'Tipo de violencia',
-      'RelacionPersonaAgresora': 'Relación con agresor',
-      'NombreAgresor': 'Agresor',
+      'tipoviolencia': 'Tipo de violencia',
+      'relacionpersonaagresora': 'Relación con agresor',
+      'nombreagresor': 'Agresor',
 
       // Narcomenudeo
-      'TipoActividadSospechosa': 'Actividad sospechosa',
-      'NumeroPersonasInvolucradas': 'Personas involucradas',
-      'DescripcionPersonasInvolucradas': 'Descripción de personas',
-      'VehiculosRelacionados': 'Vehículos relacionados',
-      'FrecuenciaSuceso': 'Frecuencia',
+      'tipoactividadsospechosa': 'Actividad sospechosa',
+      'numeropersonasinvolucradas': 'Personas involucradas',
+      'descripcionpersonasinvolucradas': 'Descripción de personas',
+      'vehiculosrelacionados': 'Vehículos relacionados',
+      'frecuenciasuceso': 'Frecuencia',
 
       // Reporte General
-      'TipoSituacionReportada': 'Tipo de situación',
-      'PersonasElementosInvolucrados': 'Personas involucradas',
-      'FrecuenciaRecurrenciaHecho': 'Frecuencia',
-      'ObservacionesAdicionales': 'Observaciones',
+      'tiposituacionreportada': 'Tipo de situación',
+      'personaselementosinvolucrados': 'Personas involucradas',
+      'frecuenciarrecurrenciahecho': 'Frecuencia',
+      'observacionesadicionales': 'Observaciones',
 
       // Evidencias
-      'UrlArchivo': 'Evidencia',
+      'urlarchivo': 'Evidencia',
     };
     return map[key] ?? key;
   }

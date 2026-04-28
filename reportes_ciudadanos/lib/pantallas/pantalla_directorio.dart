@@ -46,14 +46,14 @@ class _PantallaDirectorioState extends State<PantallaDirectorio> {
       setState(() {
         instituciones = data.map<Map<String, dynamic>>((inst) {
           return {
-            'nombre': inst['NombreInstitucion'],
-            'descripcion': inst['Descripcion'],
-            'categoria': mapTipoReporte(inst['TipoReporteId']),
-            'telefono': inst['Telefono'] ?? 'No proporcionado',
-            'correo': inst['CorreoElectronico'] ?? 'No proporcionado',
-            'horario': inst['HorarioAtencion'] ?? 'No proporcionado',
-            'direccion': inst['Direccion'] ?? 'No proporcionado',
-            'enlace': inst['EnlaceWeb'] ?? 'No proporcionado',
+            'nombre': inst['nombreinstitucion'],
+            'descripcion': inst['descripcion'],
+            'categoria': mapTipoReporte(inst['tiporeporteid']),
+            'telefono': inst['telefono'] ?? 'No proporcionado',
+            'correo': inst['correoelectronico'] ?? 'No proporcionado',
+            'horario': inst['horarioatencion'] ?? 'No proporcionado',
+            'direccion': inst['direccion'] ?? 'No proporcionado',
+            'enlace': inst['enlaceweb'] ?? 'No proporcionado',
           };
         }).toList();
 

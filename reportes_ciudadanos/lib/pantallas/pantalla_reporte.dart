@@ -360,16 +360,27 @@ class _PantallaReporteState extends State<PantallaReporte> {
 
     try {
       await ApiService.createReporte(data);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Reporte enviado correctamente')),
-      );
-    } catch (e) {
-  print("ERROR COMPLETO: $e");
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('Error: $e')),
-  );
-}
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Reporte enviado correctamente'),
+          duration: Duration(milliseconds: 900),
+        ),
+      );
+
+      Future.delayed(const Duration(milliseconds: 900), () {
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      });
+
+    } catch (e) {
+      print("Error completo: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 
   // Campos para reporte de Servicios Públicos

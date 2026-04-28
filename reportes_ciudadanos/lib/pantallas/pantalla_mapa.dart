@@ -200,8 +200,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
     int total = 0;
 
     for (var reporte in todosLosReportes) {
-      final lat = double.tryParse(reporte['Latitud'].toString());
-      final lng = double.tryParse(reporte['Longitud'].toString());
+      final lat = double.tryParse(reporte['latitud'].toString());
+      final lng = double.tryParse(reporte['longitud'].toString());
 
       if (lat == null || lng == null) continue;
 
@@ -338,9 +338,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
                     markers: [
                       ...reportesCorrupcion.map((reporte) {
                         final lat = double.tryParse(
-                            reporte['Latitud'].toString());
+                            reporte['latitud'].toString());
                         final lng = double.tryParse(
-                            reporte['Longitud'].toString());
+                            reporte['longitud'].toString());
 
                         if (lat == null || lng == null) return null;
 
@@ -373,9 +373,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
 
                       ...reportesNarcomenudeo.map((reporte) {
                         final lat = double.tryParse(
-                            reporte['Latitud'].toString());
+                            reporte['latitud'].toString());
                         final lng = double.tryParse(
-                            reporte['Longitud'].toString());
+                            reporte['longitud'].toString());
 
                         if (lat == null || lng == null) return null;
 
@@ -408,9 +408,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
 
                       ...reportesViolenciaGenero.map((reporte) {
                         final lat = double.tryParse(
-                            reporte['Latitud'].toString());
+                            reporte['latitud'].toString());
                         final lng = double.tryParse(
-                            reporte['Longitud'].toString());
+                            reporte['longitud'].toString());
 
                         if (lat == null || lng == null) return null;
 
@@ -443,9 +443,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
 
                       ...reportesRoboAsalto.map((reporte) {
                         final lat = double.tryParse(
-                            reporte['Latitud'].toString());
+                            reporte['latitud'].toString());
                         final lng = double.tryParse(
-                            reporte['Longitud'].toString());
+                            reporte['longitud'].toString());
 
                         if (lat == null || lng == null) return null;
 
@@ -478,9 +478,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
 
                       ...reportesServiciosPublicos.map((reporte) {
                         final lat = double.tryParse(
-                            reporte['Latitud'].toString());
+                            reporte['latitud'].toString());
                         final lng = double.tryParse(
-                            reporte['Longitud'].toString());
+                            reporte['longitud'].toString());
 
                         if (lat == null || lng == null) return null;
 
@@ -513,9 +513,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
 
                       ...reportesGenerales.map((reporte) {
                         final lat = double.tryParse(
-                            reporte['Latitud'].toString());
+                            reporte['latitud'].toString());
                         final lng = double.tryParse(
-                            reporte['Longitud'].toString());
+                            reporte['longitud'].toString());
 
                         if (lat == null || lng == null) return null;
 
