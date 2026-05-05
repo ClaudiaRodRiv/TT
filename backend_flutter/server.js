@@ -149,44 +149,24 @@ app.get('/evidencias/:reporteId', async (req, res) => {
 });
 
 // Subir evidencias
-app.post('/subirevidencias', async (req, res) => {
+app.post('/evidencias', async (req, res) => {
   try {
-    const { reporteId, fileName, fileBase64 } = req.body;
+    const { reporteId, urlarchivo } = req.body;
 
-    if (!reporteId || !fileBase64) {
+    if (!reporteId || !urlarchivo) {
       return res.status(400).send('Faltan datos');
     }
 
-    const buffer = Buffer.from(fileBase64, 'base64');
-
-    const filePath = `reporte_${reporteId}/${Date.now()}_${fileName}`;
-
-    const { data, error } = await supabase.storage
-      .from('Evidencias')
-      .upload(filePath, buffer, {
-        contentType: 'application/octet-stream'
-      });
-
-    if (error) {
-      return res.status(500).send(error.message);
-    }
-
-    const { data: urlData } = supabase.storage
-      .from('Evidencias')
-      .getPublicUrl(filePath);
-
-    const url = urlData.publicUrl;
-
     await db.query(
       'INSERT INTO evidencias (reporteid, urlarchivo) VALUES ($1, $2)',
-      [reporteId, url]
+      [reporteId, urlarchivo]
     );
 
-    res.json({ mensaje: 'Evidencia subida', url });
+    res.json({ mensaje: 'Evidencia guardada' });
 
   } catch (err) {
     console.error(err);
-    res.status(500).send('Error al subir evidencia');
+    res.status(500).send('Error al guardar evidencia');
   }
 });
 

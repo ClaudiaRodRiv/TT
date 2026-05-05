@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'pantallas/pantalla_inicio.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 //import 'pantallas/pantalla_pruebas.dart';
 
-void main() => runApp(const AppReportes());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://oeqmsjqmhhjvptkfzyum.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lcW1zanFtaGhqdnB0a2Z6eXVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5NjM0MzYsImV4cCI6MjA5MjUzOTQzNn0.nV1IrVt_dbBO5dNgAZitqfFX0XfOmvqMvuuuQJb76Nc',
+  );
+
+  runApp(const AppReportes());
+}
 
 class AppReportes extends StatelessWidget {
   const AppReportes({super.key});

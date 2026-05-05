@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
-import 'dart:convert';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PantallaReporte extends StatefulWidget {
   final double latitud;
@@ -20,8 +20,9 @@ class PantallaReporte extends StatefulWidget {
 
 class _PantallaReporteState extends State<PantallaReporte> {
 
+  final supabase = Supabase.instance.client;
+
   final ImagePicker _picker = ImagePicker();
-  String? evidenciaBase64;
   String? evidenciaNombre;
 
   double get latitud => widget.latitud;
@@ -389,10 +390,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
       "latitud": latitud,
       "longitud": longitud,
       "detalle": detalle,
-      "evidencia": {
-        "fileName": evidenciaNombre,
-        "fileBase64": evidenciaBase64,
-      },
+      "evidenciaUrl": evidenciaNombre
     };
 
     try {
@@ -420,20 +418,32 @@ class _PantallaReporteState extends State<PantallaReporte> {
     }
   }
 
-Future<void> _tomarEvidencia() async {
-  final XFile? file = await _picker.pickImage(
-    source: ImageSource.gallery,
-  );
+  Future<void> _tomarEvidencia() async {
+    final XFile? file = await _picker.pickMedia();
 
-  if (file == null) return;
+    if (file == null) return;
 
-  final bytes = await File(file.path).readAsBytes();
+    final fileBytes = await File(file.path).readAsBytes();
 
-  setState(() {
-    evidenciaBase64 = base64Encode(bytes);
-    evidenciaNombre = file.name;
-  });
-}
+    final fileName =
+        'reporte_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+
+    final path = fileName;
+
+    // 🔥 subir directo a Supabase
+    await supabase.storage
+        .from('Evidencias')
+        .uploadBinary(path, fileBytes);
+
+    // 🔥 obtener URL pública
+    final url = supabase.storage
+        .from('Evidencias')
+        .getPublicUrl(path);
+
+    setState(() {
+      evidenciaNombre = url;
+    });
+  }
 
   // Campos para reporte de Servicios Públicos
   List<Map<String, dynamic>> _camposServiciosPublicos() => [
