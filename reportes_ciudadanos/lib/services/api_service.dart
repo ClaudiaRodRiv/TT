@@ -113,6 +113,25 @@ static Future<List<dynamic>> getEvidencias(int reporteId) async {
   }
 }
 
+static Future<void> guardarEvidencia({
+  required int reporteId,
+  required String urlarchivo,
+}) async {
+
+  final response = await http.post(
+    Uri.parse('$baseUrl/evidencias'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'reporteId': reporteId,
+      'urlarchivo': urlarchivo,
+    }),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Error al guardar evidencia');
+  }
+}
+
 static Future<Map<String, dynamic>> createReporte(
     Map<String, dynamic> data) async {
 

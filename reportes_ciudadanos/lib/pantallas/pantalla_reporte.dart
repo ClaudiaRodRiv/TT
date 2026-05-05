@@ -23,7 +23,9 @@ class _PantallaReporteState extends State<PantallaReporte> {
   final supabase = Supabase.instance.client;
 
   final ImagePicker _picker = ImagePicker();
+  int? reporteCreadoId;
   String? evidenciaNombre;
+  List<File> evidencias = [];
 
   double get latitud => widget.latitud;
   double get longitud => widget.longitud;
@@ -106,7 +108,7 @@ class _PantallaReporteState extends State<PantallaReporte> {
                   .toList(),
               onChanged: (valor) => setState(() {
                 tipoReporteSeleccionado = valor!;
-                valores.clear(); // 🔥 limpia al cambiar tipo
+                valores.clear();
               }),
             ),
           ),
@@ -289,10 +291,10 @@ class _PantallaReporteState extends State<PantallaReporte> {
                 ],
               ),
 
-              if (evidenciaNombre != null) ...[
+              if (evidencias.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Text(
-                  evidenciaNombre!,
+                  '${evidencias.length} evidencia(s) agregada(s)',
                   style: const TextStyle(color: Colors.green),
                 ),
               ]
@@ -394,7 +396,38 @@ class _PantallaReporteState extends State<PantallaReporte> {
     };
 
     try {
-      await ApiService.createReporte(data);
+      final res = await ApiService.createReporte(data);
+      reporteCreadoId = res['reporteId'];
+
+    for (final file in evidencias) {
+      final fileBytes = await file.readAsBytes();
+
+      final cleanName = file.path.split('/').last
+          .replaceAll(RegExp(r'[^\w\.-]'), '_');
+
+      final fileName =
+          'reporte_${reporteCreadoId}_${DateTime.now().millisecondsSinceEpoch}_$cleanName';
+
+      await supabase.storage
+          .from('Evidencias')
+          .uploadBinary(fileName, fileBytes);
+
+      final url = supabase.storage
+          .from('Evidencias')
+          .getPublicUrl(fileName);
+
+      await ApiService.guardarEvidencia(
+        reporteId: reporteCreadoId!,
+        urlarchivo: url,
+      );
+    }
+
+      if (evidenciaNombre != null && reporteCreadoId != null) {
+        await ApiService.guardarEvidencia(
+          reporteId: reporteCreadoId!,
+          urlarchivo: evidenciaNombre!,
+        );
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -423,25 +456,8 @@ class _PantallaReporteState extends State<PantallaReporte> {
 
     if (file == null) return;
 
-    final fileBytes = await File(file.path).readAsBytes();
-
-    final fileName =
-        'reporte_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
-
-    final path = fileName;
-
-    // 🔥 subir directo a Supabase
-    await supabase.storage
-        .from('Evidencias')
-        .uploadBinary(path, fileBytes);
-
-    // 🔥 obtener URL pública
-    final url = supabase.storage
-        .from('Evidencias')
-        .getPublicUrl(path);
-
     setState(() {
-      evidenciaNombre = url;
+      evidencias.add(File(file.path));
     });
   }
 
