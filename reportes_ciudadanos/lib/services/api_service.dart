@@ -131,4 +131,28 @@ static Future<Map<String, dynamic>> createReporte(
   }
 }
 
+static Future<Map<String, dynamic>> subirEvidencia({
+  required int reporteId,
+  required String fileName,
+  required String fileBase64,
+}) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/subirevidencias'),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'reporteId': reporteId,
+      'fileName': fileName,
+      'fileBase64': fileBase64,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Error al subir evidencia: ${response.body}');
+  }
+}
+
 }

@@ -14,6 +14,72 @@ class _PantallaInicioState extends State<PantallaInicio> {
   final _pantallas = const [PantallaMapa(), PantallaDirectorio()];
 
   @override
+  void initState() {
+    super.initState();
+    _mostrarAviso();
+  }
+
+Future<void> _mostrarAviso() async {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              Icon(
+                Icons.warning_amber_rounded,
+                size: 50,
+                color: Colors.orange,
+              ),
+
+              const SizedBox(height: 12),
+
+              const Text(
+                'Aviso importante',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              const Text(
+                'Esta no es una aplicación oficial del gobierno.\n\n'
+                'Para presentar un reporte aquí, primero debiste haber realizado '
+                'la denuncia correspondiente en el SUAC.\n\n'
+                'Esta aplicación no canaliza ni gestiona reportes oficialmente.',
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Entendido'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  });
+}
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 

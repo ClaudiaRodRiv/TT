@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class PantallaReporte extends StatefulWidget {
   final double latitud;
@@ -16,6 +19,10 @@ class PantallaReporte extends StatefulWidget {
 }
 
 class _PantallaReporteState extends State<PantallaReporte> {
+
+  final ImagePicker _picker = ImagePicker();
+  String? evidenciaBase64;
+  String? evidenciaNombre;
 
   double get latitud => widget.latitud;
   double get longitud => widget.longitud;
@@ -269,13 +276,26 @@ class _PantallaReporteState extends State<PantallaReporte> {
 
       case 'foto':
         return _crearCard(
-          onTap: () {},
-          child: TextField(
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: campo['label'],
-              prefixIcon: Icon(Icons.camera_alt),
-            ),
+          onTap: () => _tomarEvidencia(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(Icons.camera_alt),
+                  SizedBox(width: 8),
+                  Text('Agregar evidencia'),
+                ],
+              ),
+
+              if (evidenciaNombre != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  evidenciaNombre!,
+                  style: const TextStyle(color: Colors.green),
+                ),
+              ]
+            ],
           ),
         );
 
@@ -368,7 +388,11 @@ class _PantallaReporteState extends State<PantallaReporte> {
       "nombreCiudadano": valores['Nombre o alias del ciudadano'],
       "latitud": latitud,
       "longitud": longitud,
-      "detalle": detalle
+      "detalle": detalle,
+      "evidencia": {
+        "fileName": evidenciaNombre,
+        "fileBase64": evidenciaBase64,
+      },
     };
 
     try {
@@ -395,6 +419,21 @@ class _PantallaReporteState extends State<PantallaReporte> {
       );
     }
   }
+
+Future<void> _tomarEvidencia() async {
+  final XFile? file = await _picker.pickImage(
+    source: ImageSource.gallery,
+  );
+
+  if (file == null) return;
+
+  final bytes = await File(file.path).readAsBytes();
+
+  setState(() {
+    evidenciaBase64 = base64Encode(bytes);
+    evidenciaNombre = file.name;
+  });
+}
 
   // Campos para reporte de Servicios Públicos
   List<Map<String, dynamic>> _camposServiciosPublicos() => [

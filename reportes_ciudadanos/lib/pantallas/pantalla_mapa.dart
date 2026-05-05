@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'pantalla_reporte.dart';
 import 'pantalla_detalle_reporte.dart';
+import 'pantalla_filtros.dart';
 import '../services/api_service.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
@@ -26,6 +27,17 @@ class _PantallaMapaState extends State<PantallaMapa> {
   List<dynamic> todosLosReportes = [];
 
   List<Polygon> poligonos = [];
+  Polygon? poligonoSeleccionado;
+  String? coloniaSeleccionadaActual;
+  String? alcaldiaSeleccionadaActual;
+  Map<String, bool> tiposSeleccionadosActual = {
+    'corrupcion': false,
+    'narcomenudeo': false,
+    'violencia': false,
+    'robo': false,
+    'servicios': false,
+    'general': false,
+  };
 
   double zoomActual = 12;
   LatLng? ubicacionSeleccionada;
@@ -216,10 +228,53 @@ class _PantallaMapaState extends State<PantallaMapa> {
   }
 
   Color obtenerColor(int total) {
-    if (total < 500) return Colors.green;
-    if (total < 1000) return Colors.orange;
+    if (total < 800) return Colors.green;
+    if (total < 1200) return Colors.orange;
     return Colors.red;
   }
+
+  LatLng obtenerCentro(List coords) {
+  double lat = 0;
+  double lng = 0;
+  int total = 0;
+
+  for (var punto in coords[0]) {
+    lng += punto[0];
+    lat += punto[1];
+    total++;
+  }
+
+  return LatLng(lat / total, lng / total);
+}
+
+void aplicarFiltroColonia(Map filtros) {
+  final geometry = filtros['geometry'];
+  if (geometry == null) {
+    print("No hay geometry para aplicar filtro");
+    return;
+  }
+
+  final coords = geometry['coordinates'];
+
+  final centro = obtenerCentro(coords);
+  _mapController.move(centro, 16);
+
+  List<LatLng> puntos = [];
+
+  for (var c in coords[0]) {
+    puntos.add(LatLng(c[1], c[0]));
+  }
+
+  setState(() {
+    poligonoSeleccionado = Polygon(
+      points: puntos,
+      color: Colors.blue.withValues(alpha: 0.2),
+      borderColor: Colors.blue,
+      borderStrokeWidth: 3,
+      isFilled: true,
+    );
+  });
+}
 
   Marker crearMarker({
     required double lat,
@@ -266,6 +321,12 @@ class _PantallaMapaState extends State<PantallaMapa> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final Color azulApp = theme.colorScheme.primary;
+
+    bool mostrar(String key) {
+      // si ninguno está seleccionado, mostrar todo
+      if (!tiposSeleccionadosActual.containsValue(true)) return true;
+      return tiposSeleccionadosActual[key] == true;
+    }
 
     final categoriaCorrupcion = 'Corrupción u omisión de servidor público';
     final iconoCorrupcion = categoriaIconosColores[categoriaCorrupcion]![0] as IconData;
@@ -338,7 +399,12 @@ class _PantallaMapaState extends State<PantallaMapa> {
                       'com.example.reportes_ciudadanos',
                 ),
 
-                PolygonLayer(polygons: poligonos),
+                PolygonLayer(
+                  polygons: [
+                    ...poligonos,
+                    if (poligonoSeleccionado != null) poligonoSeleccionado!,
+                  ],
+                ),
 
                 if (zoomActual >= 14)
                   MarkerLayer(
@@ -377,7 +443,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
                           ),
                         ),
 
-                      ...reportesCorrupcion.map((reporte) {
+                      ...reportesCorrupcion
+                        .where((_) => mostrar('corrupcion'))
+                        .map((reporte) {
                         final lat = double.tryParse(
                             reporte['latitud'].toString());
                         final lng = double.tryParse(
@@ -412,7 +480,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
                         );
                       }).whereType<Marker>(),
 
-                      ...reportesNarcomenudeo.map((reporte) {
+                      ...reportesNarcomenudeo
+                        .where((_) => mostrar('narcomenudeo'))
+                        .map((reporte) {
                         final lat = double.tryParse(
                             reporte['latitud'].toString());
                         final lng = double.tryParse(
@@ -447,7 +517,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
                         );
                       }).whereType<Marker>(),
 
-                      ...reportesViolenciaGenero.map((reporte) {
+                      ...reportesViolenciaGenero
+                        .where((_) => mostrar('violencia'))
+                        .map((reporte) {
                         final lat = double.tryParse(
                             reporte['latitud'].toString());
                         final lng = double.tryParse(
@@ -482,7 +554,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
                         );
                       }).whereType<Marker>(),
 
-                      ...reportesRoboAsalto.map((reporte) {
+                      ...reportesRoboAsalto
+                        .where((_) => mostrar('robo'))
+                        .map((reporte) {
                         final lat = double.tryParse(
                             reporte['latitud'].toString());
                         final lng = double.tryParse(
@@ -517,7 +591,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
                         );
                       }).whereType<Marker>(),
 
-                      ...reportesServiciosPublicos.map((reporte) {
+                      ...reportesServiciosPublicos
+                        .where((_) => mostrar('servicios'))
+                        .map((reporte) {
                         final lat = double.tryParse(
                             reporte['latitud'].toString());
                         final lng = double.tryParse(
@@ -552,7 +628,9 @@ class _PantallaMapaState extends State<PantallaMapa> {
                         );
                       }).whereType<Marker>(),
 
-                      ...reportesGenerales.map((reporte) {
+                      ...reportesGenerales
+                        .where((_) => mostrar('general'))
+                        .map((reporte) {
                         final lat = double.tryParse(
                             reporte['latitud'].toString());
                         final lng = double.tryParse(
@@ -641,6 +719,73 @@ class _PantallaMapaState extends State<PantallaMapa> {
                 backgroundColor: ubicacionLista ? azulApp : Colors.grey,
 
                 child: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
+
+            Positioned(
+              bottom: 30,
+              left: 30,
+              child: FloatingActionButton(
+                heroTag: 'filtrosBtn',
+                onPressed: () async {
+                  final filtros = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PantallaFiltros(
+                        filtrosIniciales: {
+                          'colonia': coloniaSeleccionadaActual,
+                          'alcaldia': alcaldiaSeleccionadaActual,
+                          'tipos': tiposSeleccionadosActual,
+                        },
+                      ),
+                    ),
+                  );
+                  if (filtros == null) {
+                    
+                  setState(() {
+                    poligonoSeleccionado = null;
+                    coloniaSeleccionadaActual = null;
+                    alcaldiaSeleccionadaActual = null;
+                    tiposSeleccionadosActual = {
+                      'corrupcion': false,
+                      'narcomenudeo': false,
+                      'violencia': false,
+                      'robo': false,
+                      'servicios': false,
+                      'general': false,
+                    };
+                  });
+
+                    await obtenerTodosLosReportes();
+                    await obtenerReportesCorrupcion();
+                    await obtenerReportesNarcomenudeo();
+                    await obtenerReportesViolenciaGenero();
+                    await obtenerReportesRoboAsalto();
+                    await obtenerReportesServiciosPublicos();
+                    await obtenerReportesGenerales();
+                    await cargarPoligonos();
+                  } 
+                    else {
+                      setState(() {
+                        coloniaSeleccionadaActual = filtros['colonia'];
+                        alcaldiaSeleccionadaActual = filtros['alcaldia'];
+
+                        final tipos = filtros['tipos'];
+                        tiposSeleccionadosActual = {
+                          'corrupcion': tipos?['corrupcion'] ?? false,
+                          'narcomenudeo': tipos?['narcomenudeo'] ?? false,
+                          'violencia': tipos?['violencia'] ?? false,
+                          'robo': tipos?['robo'] ?? false,
+                          'servicios': tipos?['servicios'] ?? false,
+                          'general': tipos?['general'] ?? false,
+                        };
+                      });
+
+                      aplicarFiltroColonia(filtros);
+                    }
+                },
+                backgroundColor: azulApp,
+                child: const Icon(Icons.filter_list, color: Colors.white),
               ),
             ),
           ],
