@@ -7,6 +7,7 @@ import 'pantalla_filtros.dart';
 import '../services/api_service.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:geolocator/geolocator.dart';
 
 class PantallaMapa extends StatefulWidget {
   const PantallaMapa({super.key});
@@ -146,6 +147,50 @@ class _PantallaMapaState extends State<PantallaMapa> {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> irAMiUbicacion() async {
+    bool servicioHabilitado;
+    LocationPermission permiso;
+
+    servicioHabilitado = await Geolocator.isLocationServiceEnabled();
+
+    if (!servicioHabilitado) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Activa la ubicación del dispositivo'),
+        ),
+      );
+      return;
+    }
+
+    permiso = await Geolocator.checkPermission();
+
+    if (permiso == LocationPermission.denied) {
+      permiso = await Geolocator.requestPermission();
+
+      if (permiso == LocationPermission.denied) {
+        return;
+      }
+    }
+
+    if (permiso == LocationPermission.deniedForever) {
+      return;
+    }
+
+    final posicion = await Geolocator.getCurrentPosition();
+
+    final miUbicacion = LatLng(
+      posicion.latitude,
+      posicion.longitude,
+    );
+
+    _mapController.move(miUbicacion, 17);
+
+    setState(() {
+      ubicacionSeleccionada = miUbicacion;
+      ubicacionLista = true;
+    });
   }
 
   Future<void> cargarPoligonos() async {
@@ -788,6 +833,21 @@ void aplicarFiltroColonia(Map filtros) {
                 child: const Icon(Icons.filter_list, color: Colors.white),
               ),
             ),
+
+            Positioned(
+              bottom: 100,
+              left: 30,
+              child: FloatingActionButton(
+                heroTag: 'ubicacionBtn',
+                onPressed: irAMiUbicacion,
+                backgroundColor: azulApp,
+                child: const Icon(
+                  Icons.my_location,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+
           ],
         ),
       ),

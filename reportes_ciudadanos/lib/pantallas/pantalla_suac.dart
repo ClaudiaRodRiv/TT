@@ -24,9 +24,15 @@ class _PantallaSUACState extends State<PantallaSUAC> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SUAC / Locatel'),
+        title: Text(
+          'SUAC / Locatel',
+          style:
+              theme.textTheme.headlineSmall?.copyWith(color: Colors.white70),
+        ),
       ),
       body: WebViewWidget(controller: controller),
     );
