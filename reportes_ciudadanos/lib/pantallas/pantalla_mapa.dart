@@ -255,10 +255,49 @@ class _PantallaMapaState extends State<PantallaMapa> {
     return dentro;
   }
 
+  List<dynamic> obtenerReportesFiltrados() {
+
+    if (!tiposSeleccionadosActual.containsValue(true)) {
+      return todosLosReportes;
+    }
+
+    List<dynamic> filtrados = [];
+
+    if (tiposSeleccionadosActual['corrupcion'] == true) {
+      filtrados.addAll(reportesCorrupcion);
+    }
+
+    if (tiposSeleccionadosActual['narcomenudeo'] == true) {
+      filtrados.addAll(reportesNarcomenudeo);
+    }
+
+    if (tiposSeleccionadosActual['violencia'] == true) {
+      filtrados.addAll(reportesViolenciaGenero);
+    }
+
+    if (tiposSeleccionadosActual['robo'] == true) {
+      filtrados.addAll(reportesRoboAsalto);
+    }
+
+    if (tiposSeleccionadosActual['servicios'] == true) {
+      filtrados.addAll(reportesServiciosPublicos);
+    }
+
+    if (tiposSeleccionadosActual['general'] == true) {
+      filtrados.addAll(reportesGenerales);
+    }
+
+    return filtrados;
+  }
+
   int contarReportesEnPoligono(List<LatLng> poligono) {
+
+    final reportes = obtenerReportesFiltrados();
+
     int total = 0;
 
-    for (var reporte in todosLosReportes) {
+    for (var reporte in reportes) {
+
       final lat = double.tryParse(reporte['latitud'].toString());
       final lng = double.tryParse(reporte['longitud'].toString());
 
@@ -827,6 +866,7 @@ void aplicarFiltroColonia(Map filtros) {
                       });
 
                       aplicarFiltroColonia(filtros);
+                      await cargarPoligonos();
                     }
                 },
                 backgroundColor: azulApp,
